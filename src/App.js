@@ -1,13 +1,48 @@
 import './App.css';
 import arrow from './assets/images/icon-arrow.svg';
 import locationIcon from './assets/images/icon-location.svg';
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 
 function App() {
  const [search, setSearch] = useState('');
-  
 
-//  console.log(process.env.API_KEY)
+  const [ipAddress, setIpAddress] = useState('');
+  const [geolocationData, setGeolocationData] = useState({});
+
+  useEffect(() => {
+    const fetchIpAddress = async () => {
+      try {
+        // Fetch public IP address from ipify
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        setIpAddress(data.ip);
+      } catch (error) {
+        console.error('Error fetching IP address:', error);
+      }
+    };
+
+    fetchIpAddress();
+  }, []);
+  console.log("MOUNTED");
+  useEffect(() => {
+    console.log("========ipAddress");
+      const fetchGeolocationData = async () => {
+      try {
+        // Fetch geolocation data from ipinfo.io using the IP address
+        const response = await fetch(`https://geo.ipify.org/api/v2/country,city?apiKey=${process.env.REACT_APP_API_KEY}&ipAddress=${ipAddress}`);
+
+        const data = await response.json();
+        console.log(data);
+        setGeolocationData(data);
+      } catch (error) {
+        console.error('Error fetching geolocation data:', error);
+      }
+    };
+
+    if (ipAddress) {
+      fetchGeolocationData();
+    }
+  }, [ipAddress]);
 
   const handleChange = (e) => {
     console.log(e.target.value)
@@ -33,22 +68,22 @@ function App() {
           <div className='flex'>
             <div>
             <span>ip address</span>
-            <h2>192.212.174.101</h2>
+            <h2>{geolocationData.ip}</h2>
             </div>
-            <div className='bord'></div>
+            <div className='bord'/>
             <div>
             <span>location</span>
-            <h2>Brooklyn, NY 1001</h2>
+            <h2>{`${geolocationData.location?.city}, ${ geolocationData.location?.region}. ${geolocationData.location?.country}`}</h2>
             </div>
-            <div className='bord'></div>
+            <div className='bord'/>
             <div>
             <span>timezone</span>
-            <h2>UTC -05:00</h2>
+            <h2>{geolocationData.location?.timezone}</h2>
             </div>
-            <div className='bord'></div>
+            <div className='bord'/>
             <div>
             <span>isp</span>
-            <h2>UTC -05:00</h2>
+            <h2>{geolocationData.isp}</h2>
             </div>
             
           </div>
