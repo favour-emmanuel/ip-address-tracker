@@ -15,7 +15,9 @@ function App() {
         // Fetch public IP address from ipify
         const response = await fetch('https://api.ipify.org?format=json');
         const data = await response.json();
+
         setIpAddress(data.ip);
+
       } catch (error) {
         console.error('Error fetching IP address:', error);
       }
@@ -23,22 +25,22 @@ function App() {
 
     fetchIpAddress();
   }, []);
-  console.log("MOUNTED");
+
   useEffect(() => {
-    console.log("========ipAddress");
-      const fetchGeolocationData = async () => {
+    const fetchGeolocationData = async () => {
       try {
         // Fetch geolocation data from ipinfo.io using the IP address
         const response = await fetch(`https://geo.ipify.org/api/v2/country,city?apiKey=${process.env.REACT_APP_API_KEY}&ipAddress=${ipAddress}`);
 
         const data = await response.json();
-        console.log(data);
+
         setGeolocationData(data);
       } catch (error) {
         console.error('Error fetching geolocation data:', error);
       }
     };
 
+    //check to make sure we dont call fetchGeolocationData(); function when the compont runs the first time
     if (ipAddress) {
       fetchGeolocationData();
     }
