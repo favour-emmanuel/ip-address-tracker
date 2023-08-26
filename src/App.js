@@ -15,9 +15,7 @@ function App() {
         // Fetch public IP address from ipify
         const response = await fetch('https://api.ipify.org?format=json');
         const data = await response.json();
-
         setIpAddress(data.ip);
-
       } catch (error) {
         console.error('Error fetching IP address:', error);
       }
